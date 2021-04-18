@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .el-row {
+    margin-bottom: 20px;
+    
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
+  }
+  html,body{
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+  }
+  #app{
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+  }
+  .chart{
+      border: 1px solid red;
+      height:100%;
+      margin: 2px;
+      height: 100%;
+  }
+  .el-tabs__content{
+      height: 98%;
+  }
+  .el-tab-pane{
+    height: 100%;
+  }
+
+  .ss{
+    position: relative;
+    display: block;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    margin-top: 20px;
+  }
+
+
+
+    </style>
+</head>
+<body>
+    <div id="app" ref="app">  
+        <!-- <el-row :gutter="20">
+            <el-col :span="24">
+                <div class="grid-content bg-purple">
+                    <h2 style="text-align: center;">{{title}}</h2>
+                </div>
+            </el-col>
+        </el-row>
+
+        
+        <div class="grid-content bg-purple" style="height: 600px;">
+            <el-carousel indicator-position="outside" style="text-align: center;">
+                <el-carousel-item v-for="chart in charts"  >
+                   
+                   <chart :id="chart.id" :chart="chart"></chart>
+                </el-carousel-item>
+            </el-carousel>
+        </div> -->
+         
+
+        <template>
+            <!-- <el-radio-group v-model="tabPosition" style="margin-bottom: 30px;">
+              <el-radio-button label="top">top</el-radio-button>
+              <el-radio-button label="right">right</el-radio-button>
+              <el-radio-button label="bottom">bottom</el-radio-button>
+              <el-radio-button label="left">left</el-radio-button>
+            </el-radio-group> -->
+          
+            <el-tabs :tab-position="tabPosition" style="height: 100%;" v-model="activeTab" @tab-click="handleClick">
+              <el-tab-pane v-for="chart in charts" :key="chart.id" :label="chart.title" :name="chart.title"  >
+                  <chart :id="chart.id" :chart="chart" :size='chartSize'></chart>
+                </el-tab-pane>
+
+            </el-tabs>
+        </template>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!-- 图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.0.2/dist/echarts.min.js"></script>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <script src="https://unpkg.com/vue-cookies@1.7.4/vue-cookies.js"></script>
+    <!-- <script src="aa.js"></script>  -->
+    <script>
+
+        Vue.component('chart',{
+            props:['chart','size'],
+            template: `<div style="height:96%;width:98%;position: relative;display: block;background-color: #fff;border: 1px solid #e0e0e0;
+                        border-radius: 4px;box-shadow: 0 6px 12px rgba(0,0,0,.175); margin-top: 20px;margin-left: 10px;" ref="tt"></div>`,
+            mounted:function(){
+
+                    // console.log(this.chart.title);
+                    //console.log(this.$ref.tt.$el.ClientHeight);
+                    // console.log(this.$refs.tt.clientHeight);
+                    
+                    // height = this.$refs.tt.clientHeight;
+                    // width  = this.$refs.tt.clientWidth-60;
+                    //console.log(width,height);
+                    this.$nextTick(() => {
+                        console.log(this.size.width,this.size.height);
+
+                        var chart = new CanvasJS.Chart(this.chart.id, {
+                        animationEnabled: true,
+                        exportEnabled: false,
+                        width:this.size.width-120,
+                        height:this.size.height-60,
+                        theme: "light2", // "light1", "light2", "dark1", "dark2"
+                        title:{
+                            text: "Simple Column Chart with Index Labels"
+                        },
+                        subtitles:[
+                        {
+                            text: this.chart.title
+                            //Uncomment properties below to see how they behave
+                            //fontColor: "red",
+                            //fontSize: 30
+                        }],
+                        axisY: {
+                        includeZero: true
+                        },
+                        data: [{
+                            type: "column", //change type to bar, line, area, pie, etc
+                            indexLabel: "{y}", //Shows y value on all Data Points
+                            indexLabelFontColor: "#5A5757",
+                            indexLabelFontSize: 16,
+                            indexLabelPlacement: "outside",
+                            dataPoints: [
+                                { x: 10, y: 71 },
+                                { x: 20, y: 55 },
+                                { x: 30, y: 50 },
+                                { x: 40, y: 65 },
+                                { x: 50, y: 92, indexLabel: "\u2605 Highest" },
+                                { x: 60, y: 68 },
+                                { x: 70, y: 38 },
+                                { x: 80, y: 71 },
+                                { x: 90, y: 54 },
+                                { x: 100, y: 60 },
+                                { x: 110, y: 36 },
+                                { x: 120, y: 49 },
+                                { x: 130, y: 21, indexLabel: "\u2691 Lowest" }
+                                ]
+                            }]
+                        });
+                        chart.render();
+
+                    });
+                    //console.log(this.size.width,this.size.height);
+                    // if(height == 0 || width ==0){
+                    //     console.log(this.$refs.tt);
+                    //     return;
+                    // }
+                        
+                    
+            },
+            methods:{
+                render(){
+                    console.log(this.chart.id+ 'render');
+                }
+            }
+
+
+        });
+
+        new Vue({
+            el:'#app',
+            data:{
+                title:"IQC检验进度",
+                chartdata:[
+                    [120, 200, 150, 50, 70, 110, 130],
+                    [110, 210, 160, 60, 70, 110, 130],
+                    [2, 3, 4, 5, 6, 7, 8],
+                    [90, 230, 180, 80, 70, 110, 130]
+                ],
+                charts:[
+                    { id:'chart1',title:'A区'},
+                    { id:'chart2',title:'B区'},
+                    { id:'chart3',title:'C区'},
+                    { id:'chart4',title:'D区'}
+                ],
+                tabPosition: 'left',
+                activeTab: 'B区',
+                chartSize:{
+                    height:0,
+                    width:0
+                }
+                
+            },
+            mounted:function(){
+                //this.load_chart2();
+                //console.log(this.$refs.app.clientWidth,this.$refs.app.clientHeight);
+                
+                
+                chartContainer = $('.el-tabs__content')[0];
+                console.log(chartContainer);
+                this.chartSize.height = chartContainer.clientHeight;
+                this.chartSize.width = chartContainer.clientWidth;
+                console.log(this.chartSize.width,this.chartSize.height)
+                SlectedTab = this.$cookies.get("SlectedTab");
+                console.log('SlectedTab: '+SlectedTab);
+                if(SlectedTab != null){
+                    this.activeTab = SlectedTab;
+                }
+                
+            },
+            methods:{
+                load_chart:function(){
+                    
+                    //var chartDom = document.getElementById("1");
+                    var chartDom = this.$refs.chart;
+                    chartDom.forEach((value, key, iterable) => {
+                        console.log(value);
+                        console.log(key);
+                        var myChart = echarts.init(value);
+                        var option;
+
+                        option = {
+                            xAxis: {
+                                type: 'category',
+                                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                            },
+                            title: {
+                                text: '      23232',
+                                textAlign:'center'
+                            },
+                            legend: {
+                                data:['销量']
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: [{
+                                data: this.chartdata[key],
+                                type: 'bar',
+                                showBackground: true,
+                                backgroundStyle: {
+                                    color: 'rgba(180, 180, 180, 0.2)'
+                                }
+                            }]
+                        };
+
+                        option && myChart.setOption(option);
+                    });
+                                                    
+                    
+                },
+                load_chart2:function(){
+                    var chartDom = this.$refs.chart;
+                    chartDom.forEach((value, key, iterable) => {
+                    console.log(value);
+                    var chart = new CanvasJS.Chart(value, {
+                    animationEnabled: true,
+                    exportEnabled: true,
+                    width:900,
+                    height:1400,
+                    theme: "light1", // "light1", "light2", "dark1", "dark2"
+                    title:{
+                        text: "Simple Column Chart with Index Labels"
+                    },
+                    axisY: {
+                    includeZero: true
+                    },
+                    data: [{
+                        type: "column", //change type to bar, line, area, pie, etc
+                        //indexLabel: "{y}", //Shows y value on all Data Points
+                        indexLabelFontColor: "#5A5757",
+                        indexLabelFontSize: 16,
+                        indexLabelPlacement: "outside",
+                        dataPoints: [
+                            { x: 10, y: 71 },
+                            { x: 20, y: 55 },
+                            { x: 30, y: 50 },
+                            { x: 40, y: 65 },
+                            { x: 50, y: 92, indexLabel: "\u2605 Highest" },
+                            { x: 60, y: 68 },
+                            { x: 70, y: 38 },
+                            { x: 80, y: 71 },
+                            { x: 90, y: 54 },
+                            { x: 100, y: 60 },
+                            { x: 110, y: 36 },
+                            { x: 120, y: 49 },
+                            { x: 130, y: 21, indexLabel: "\u2691 Lowest" }
+                            ]
+                        }]
+                    });
+                    chart.render();
+
+                    });
+                    
+                },
+                handleClick(targetName){
+                    this.$cookies.set("SlectedTab",targetName.name,-1);  // never expire
+                    // console.log(targetName);
+                    // console.log(this.$children);
+                    //this.$children[0].render();
+                }
+            }
+
+        });
+
+
+        
+
+    </script>
+</body>
+</html>
